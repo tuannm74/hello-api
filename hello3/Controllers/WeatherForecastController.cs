@@ -33,7 +33,7 @@ namespace hello3.Controllers
         [HttpGet("Hello")]
         public string Get1()
         {
-            return "Tuan";
+            return "hello api";
         }
     }
 }
