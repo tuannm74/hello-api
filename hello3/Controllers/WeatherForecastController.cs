@@ -29,5 +29,11 @@ namespace hello3.Controllers
             })
             .ToArray();
         }
+
+        [HttpGet("Hello")]
+        public string Get1()
+        {
+            return "Tuan";
+        }
     }
 }
