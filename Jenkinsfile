@@ -8,6 +8,10 @@ pipeline {
 	    DOCKER_USER = credentials('DOCKER_USER')
 	    DOCKER_PASSWORD = credentials('DOCKER_PASSWORD')
       }
+    stage('Initialize'){
+        def dockerHome = tool 'myDocker'
+        env.PATH = "${dockerHome}/bin:${env.PATH}"
+    }
     stages {
         stage('Build') {
             steps {
