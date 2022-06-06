@@ -11,7 +11,6 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building12..'
-                   steps {
                 script {
                     withCredentials([string(credentialsId: 'DOCKER_USER', variable: 'DOCKER_USER'), string(credentialsId: 'DOCKER_PASSWORD', variable: 'DOCKER_PASSWORD')]) {
 						sh "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD"
@@ -53,4 +52,4 @@ pipeline {
         }
     }
 }
-}
+
