@@ -10,7 +10,6 @@ pipeline {
       }
 
     stages {
-
         stage('Build') {
             steps {
                 echo 'Building12..'
@@ -21,11 +20,8 @@ pipeline {
 		    echo "build stage tag: ${TAG}"                    					
                     sh "docker build -f Dockerfile -t ${REPOSITORY_URI}:${TAG}.${BUILD_TAG} --build-arg SERVICE=${TAG} --build-arg PORT=${PORT} ."					
                     //sh "docker push ${REPOSITORY_URI}:${TAG}.${BUILD_TAG}"
-
-
                     //clean to save disk
 			sh "docker image rm ${REPOSITORY_URI}:${TAG}.${BUILD_TAG}"				
-				
 		        //sh "docker image prune -f"
                 }  
             }
