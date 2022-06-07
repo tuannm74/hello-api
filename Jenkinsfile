@@ -11,6 +11,9 @@ pipeline {
 
     stages {
         stage('Build') {
+	agent {
+        	node {label 'master'}
+      	}
             steps {
                 echo 'Building...'
                 script {
