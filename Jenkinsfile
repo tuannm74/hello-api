@@ -1,54 +1,57 @@
 pipeline {
-    agent any
-    environment {
-            REPOSITORY_URI = "tuannm74/api" 
-            TAG = "Hello"
-            PORT = "5000"
-            BUILD_TAG = ""
-	    DOCKER_USER = credentials('DOCKER_USER')
-	    DOCKER_PASSWORD = credentials('DOCKER_PASSWORD')
+
+  agent none
+
+  environment {
+    DOCKER_IMAGE = "tuannm74/api"
+  }
+
+  stages {
+    stage("Build") {
+      agent {
+        node {label 'master'}
       }
-
-    stages {
-        stage('Build') {
-            steps {
-                echo 'Building...'
-                script {
-		    sh "docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}"		
-                    BUILD_TAG="${GIT_BRANCH.tokenize('/').pop()}-${BUILD_NUMBER}-${GIT_COMMIT.substring(0,7)}"
-                    					
-		    echo "build stage tag: ${TAG}"  
-	            
-		    sh "docker build -t ${REPOSITORY_URI}:${TAG}.${BUILD_TAG} ."
-		    
-                    //sh "docker build -f Dockerfile -t ${REPOSITORY_URI}:${TAG}.${BUILD_TAG} --build-arg SERVICE=${TAG} --build-arg PORT=${PORT} ."					
-                    sh "docker push ${REPOSITORY_URI}:${TAG}.${BUILD_TAG}"
-                    //clean to save disk
-			sh "docker image rm ${REPOSITORY_URI}:${TAG}.${BUILD_TAG}"				
-		        //sh "docker image prune -f"
-                }  
-            }
+      environment {
+        DOCKER_TAG="${GIT_BRANCH.tokenize('/').pop()}-${BUILD_NUMBER}-${GIT_COMMIT.substring(0,7)}"
+      }
+      steps {
+        sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ./jenkins/api/"
+        sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
+        sh "docker image ls | grep ${DOCKER_IMAGE}"
+        withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+          sh "echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin"
         }
-        stage("deploy") {
-            steps {
-                echo "deploy stage tag: ${TAG}.${BUILD_TAG}"
-				
-                sshagent(credentials: ['server-ssh']) {
-                    sh "ssh -o StrictHostKeyChecking=no -l ubuntu 54.219.182.125 './deploy_server.sh'" 
-					
-                }
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Testing...'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
-            }
-        }
+        sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+        sh "docker push ${DOCKER_IMAGE}:latest"
+        
+        // clean to save disk
+        sh "docker image rm ${DOCKER_IMAGE}:${DOCKER_TAG}"
+        sh "docker image rm ${DOCKER_IMAGE}:latest"
+      }
     }
-}
 
+    stage("Deploy") {
+      agent any
+      // steps{
+      //   withCredentials([sshKey(credentialsId: 'ssh-key', sshKeyVariable: 'SSH_KEY')]) {
+      //     sh "ssh -i $SSH_KEY ubuntu@54.255.224.142 './jenkins/api/deploy.sh'"
+      //   }
+      // }
+      steps{
+        sshagent(credentials:['ssh-remote']) {
+          sh "ssh -o StrictHostKeyChecking=no -l ubuntu 54.255.224.142 '/home/ubuntu/deploy.sh'"
+        }
+      }
+    }
+  }
+
+  post {
+    success {
+      echo "SUCCESSFULY"
+    }
+    failure {
+      echo "FAILED"
+    }
+  }
+
+}
