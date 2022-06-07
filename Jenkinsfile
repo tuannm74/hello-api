@@ -19,7 +19,7 @@ pipeline {
                     					
 		    echo "build stage tag: ${TAG}"  
 	            
-		    sh "docker build -t ${REPOSITORY_URI}:${TAG}.${BUILD_TAG} ."
+		    sh "docker build -t ${REPOSITORY_URI}:${TAG}.${BUILD_TAG} ./"
 		    
                     //sh "docker build -f Dockerfile -t ${REPOSITORY_URI}:${TAG}.${BUILD_TAG} --build-arg SERVICE=${TAG} --build-arg PORT=${PORT} ."					
                     sh "docker push ${REPOSITORY_URI}:${TAG}.${BUILD_TAG}"
