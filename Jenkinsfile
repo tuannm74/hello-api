@@ -14,7 +14,7 @@ pipeline {
             steps {
                 echo 'Building...'
                 script {
-		    sh "docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}"		
+		    sh "sudo docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}"		
                     BUILD_TAG="${GIT_BRANCH.tokenize('/').pop()}-${BUILD_NUMBER}-${GIT_COMMIT.substring(0,7)}"
                     					
 		    echo "build stage tag: ${TAG}"  
