@@ -10,7 +10,7 @@ COPY ["hello3/hello3.csproj", "hello3/"]
 RUN dotnet restore "hello3/hello3.csproj"
 COPY . .
 WORKDIR "/src/hello3"
-#RUN dotnet build "hello3.csproj" -c Release -o /app/build
+RUN dotnet build "hello3.csproj" -c Release -o /app/build
 
 FROM build AS publish
 RUN dotnet publish "hello3.csproj" -c Release -o /app/publish
