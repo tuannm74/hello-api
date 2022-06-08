@@ -11,23 +11,13 @@ pipeline {
 
     stages {
         stage('Build') {
-            steps {
-                echo 'Building...'
-                script {
-		    sh " docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}"		
-                    BUILD_TAG="${GIT_BRANCH.tokenize('/').pop()}-${BUILD_NUMBER}-${GIT_COMMIT.substring(0,7)}"
-                    					
-		    echo "build stage tag: ${TAG}"  
-	            
-		    sh "docker build -t ${REPOSITORY_URI}:${TAG}.${BUILD_TAG} ."
-		    
-                    //sh "docker build -f Dockerfile -t ${REPOSITORY_URI}:${TAG}.${BUILD_TAG} --build-arg SERVICE=${TAG} --build-arg PORT=${PORT} ."					
-                    sh "docker push ${REPOSITORY_URI}:${TAG}.${BUILD_TAG}"
-                    //clean to save disk
-			sh "docker image rm ${REPOSITORY_URI}:${TAG}.${BUILD_TAG}"				
-		        //sh "docker image prune -f"
-                }  
-            }
+           
+            // This step should not normally be used in your script. Consult the inline help for details.
+		withDockerRegistry(credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/') {
+		    // some block
+			sh 'docker build -t tuannm74/api:v10 .'
+			sh 'docker push -t tuannm74/api:v10 .'
+		}
         }
         stage("deploy") {
             steps {
