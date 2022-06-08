@@ -5,8 +5,8 @@ pipeline {
             TAG = "Hello"
             PORT = "5000"
             BUILD_TAG = ""
-	    DOCKER_USER = credentials('DOCKER_USER')
-	    DOCKER_PASSWORD = credentials('DOCKER_PASSWORD')
+	    //DOCKER_USER = credentials('DOCKER_USER')
+	    //DOCKER_PASSWORD = credentials('DOCKER_PASSWORD')
       }
 
     stages {
