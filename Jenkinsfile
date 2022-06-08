@@ -7,6 +7,8 @@ pipeline {
             BUILD_TAG = ""
 	    DOCKER_USER = credentials('DOCKER_USER')
 	    DOCKER_PASSWORD = credentials('DOCKER_PASSWORD')
+	    SERVER_NAME = credentials('SERVER_NAME')
+	    SERVER_IP = credentials('SERVER_IP')
       }
 
     stages {
@@ -34,7 +36,7 @@ pipeline {
                 echo "deploy stage tag: ${TAG}.${BUILD_TAG}"
 				
                 sshagent(credentials: ['server-ssh']) {
-                    sh "ssh -o StrictHostKeyChecking=no -l ubuntu 54.219.182.125 './deploy_server.sh'" 
+                    sh "ssh -o StrictHostKeyChecking=no -l ${SERVER_NAME} ${SERVER_IP} './deploy_server.sh ${REPOSITORY_URI} ${TAG} ${BUILD_TAG}'" 
 					
                 }
             }
@@ -44,11 +46,7 @@ pipeline {
                 echo 'Testing...'
             }
         }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
-            }
-        }
+  
     }
 }
 
