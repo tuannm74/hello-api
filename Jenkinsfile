@@ -8,7 +8,13 @@ pipeline {
 	    //DOCKER_USER = credentials('DOCKER_USER')
 	    //DOCKER_PASSWORD = credentials('DOCKER_PASSWORD')
       }
-
+    stages {
+        stage('Test') {
+            steps {
+                sh 'docker --version '
+            }
+        }
+    }
     stages {
         stage('Build') {
            steps {
