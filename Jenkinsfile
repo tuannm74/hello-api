@@ -36,7 +36,7 @@ pipeline {
                 echo "deploy stage tag: ${TAG}.${BUILD_TAG}"
 				
                 sshagent(credentials: ['server-ssh']) {
-                    sh "ssh -o StrictHostKeyChecking=no -l ${SERVER_NAME} ${SERVER_IP} './home/ubuntu/deploy_server.sh ${REPOSITORY_URI} ${TAG} ${BUILD_TAG}'" 
+                    sh "ssh -o StrictHostKeyChecking=no -l ${SERVER_NAME} ${SERVER_IP} './deploy.sh ${REPOSITORY_URI} ${TAG} ${BUILD_TAG}'" 
 					
                 }
             }
